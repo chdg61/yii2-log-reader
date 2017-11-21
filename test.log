@@ -1,0 +1,113 @@
+2016-07-01 14:15:29 [192.168.1.1][23][e4e5q376st7uqoqts58g4e18m7][error][api\exception\ApiException] api\exception\ApiException: Не удалось получить список заказов in /usr/local/www/vendor/yii2-api/Api.php:79
+Stack trace:
+#0 /usr/local/www/backend/controllers/OrderController.php(34): api\Api->getOrderList()
+#1 [internal function]: backend\controllers\OrderController->actionList()
+#2 /usr/local/www/vendor/yiisoft/yii2/base/InlineAction.php(55): call_user_func_array(Array, Array)
+#3 /usr/local/www/vendor/yiisoft/yii2/base/Controller.php(154): yii\base\InlineAction->runWithParams(Array)
+#4 /usr/local/www/vendor/yiisoft/yii2/base/Module.php(454): yii\base\Controller->runAction('list', Array)
+#5 /usr/local/www/vendor/yiisoft/yii2/web/Application.php(84): yii\base\Module->runAction('order/l...', Array)
+#6 /usr/local/www/vendor/yiisoft/yii2/base/Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#7 /usr/local/www/backend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2016-07-01 14:14:59 [192.168.1.1][23][e4e5q376st7uqoqts58g4e18m7][info][application] $_COOKIE = [
+    '_ym_uid' => '1234567890987665'
+    '_gat' => '1'
+    'PHPSESSID' => 'e4e5q376st7uqoqts58g4e18m7'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 23
+]
+
+$_SERVER = [
+    'HOME' => '/'
+    'USER' => 'www'
+    'HTTP_COOKIE' => 'PHPSESSID=e4e5q376st7uqoqts58g4e18m7'
+    'HTTP_ACCEPT_LANGUAGE' => 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, sdch'
+    'HTTP_REFERER' => 'http://domen.com/auth'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'domen.com'
+    'SCRIPT_FILENAME' => '/usr/local/www//backend/web/index.php'
+    'REDIRECT_STATUS' => '200'
+    'SERVER_NAME' => 'domen.com'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '192.168.2.2'
+    'REMOTE_PORT' => '3633'
+    'REMOTE_ADDR' => '192.168.3.3'
+    'SERVER_SOFTWARE' => 'nginx/1.10.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REQUEST_SCHEME' => 'http'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'DOCUMENT_ROOT' => '/usr/local/www'
+    'DOCUMENT_URI' => '/backend/web/index.php'
+    'REQUEST_URI' => '/admin/orders'
+    'SCRIPT_NAME' => '/backend/web/index.php'
+    'CONTENT_LENGTH' => ''
+    'CONTENT_TYPE' => ''
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => ''
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/backend/web/index.php'
+    'REQUEST_TIME' => 1467382499
+]
+2016-07-01 14:16:14 [192.168.1.1][23][dgo965n0fr0mij9bcs1auheoj0][error][quartz\api\exception\ApiException] quartz\api\exception\ApiException: Не удалось получить список заказов in /usr/local/www/vendor/yii2-api/Api.php:79
+Stack trace:
+#0 /usr/local/www/backend/controllers/OrderController.php(34): quartz\api\Api->getOrderList()
+#1 [internal function]: backend\controllers\OrderController->actionList()
+#2 /usr/local/www/vendor/yiisoft/yii2/base/InlineAction.php(55): call_user_func_array(Array, Array)
+#3 /usr/local/www/vendor/yiisoft/yii2/base/Controller.php(154): yii\base\InlineAction->runWithParams(Array)
+#4 /usr/local/www/vendor/yiisoft/yii2/base/Module.php(454): yii\base\Controller->runAction('list', Array)
+#5 /usr/local/www/vendor/yiisoft/yii2/web/Application.php(84): yii\base\Module->runAction('order/l...', Array)
+#6 /usr/local/www/vendor/yiisoft/yii2/base/Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#7 /usr/local/www/backend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2016-07-01 14:15:44 [5.166.116.1][23][dgo965n0fr0mij9bcs1auheoj0][info][application] $_COOKIE = [
+    '_ym_uid' => '1464576174262065318'
+    '_gat' => '1'
+    'PHPSESSID' => 'dgo965n0fr0mij9bcs1auheoj0'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 23
+]
+
+$_SERVER = [
+    'HOME' => '/'
+    'USER' => 'www'
+    'HTTP_COOKIE' => 'PHPSESSID=dgo965n0fr0mij9bcs1auheoj0'
+    'HTTP_ACCEPT_LANGUAGE' => 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, sdch'
+    'HTTP_REFERER' => 'http://domen2.com/order'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'domen2.com'
+    'SCRIPT_FILENAME' => '/usr/local/www//backend/web/index.php'
+    'REDIRECT_STATUS' => '200'
+    'SERVER_NAME' => 'domen2.com'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '192.168.2.2'
+    'REMOTE_PORT' => '36556'
+    'REMOTE_ADDR' => '192.168.3.3'
+    'SERVER_SOFTWARE' => 'nginx/1.10.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REQUEST_SCHEME' => 'http'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'DOCUMENT_ROOT' => '/usr/local/www'
+    'DOCUMENT_URI' => '/backend/web/index.php'
+    'REQUEST_URI' => '/admin/orders'
+    'SCRIPT_NAME' => '/backend/web/index.php'
+    'CONTENT_LENGTH' => ''
+    'CONTENT_TYPE' => ''
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => ''
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/backend/web/index.php'
+    'REQUEST_TIME' => 1467382544
+]
