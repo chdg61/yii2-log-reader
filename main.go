@@ -19,11 +19,15 @@ func main() {
 
 	chinks := Parse(file)
 
-	collections := CreateEmptyCollections()
+	collection := NewCollection()
 	for _, chunk := range chinks {
-		collections.AddChunk(&chunk)
+		collection.AddChunk(&chunk)
 	}
 
 	gui := NewGui()
+	defer gui.Destroy()
+
+	gui.AddCollection(collection)
+
 	gui.Start()
 }

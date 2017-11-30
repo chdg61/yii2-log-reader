@@ -4,46 +4,46 @@ import (
 	"testing"
 )
 
-func TestCreateEmptyCollections(t *testing.T) {
-	collections := CreateEmptyCollections();
+func TestCreateEmptyCollection(t *testing.T) {
+	collection := NewCollection()
 
-	if len(collections.ip) > 0 {
+	if len(collection.ip) > 0 {
 		t.Error("Not empty ip collection")
 	}
 
-	if len(collections.time) > 0 {
+	if len(collection.time) > 0 {
 		t.Error("Not empty time collection")
 	}
 
-	if len(collections.chunkType) > 0 {
+	if len(collection.chunkType) > 0 {
 		t.Error("Not empty type collection")
 	}
 
-	if len(collections.application) > 0 {
+	if len(collection.application) > 0 {
 		t.Error("Not empty application collection")
 	}
 
-	if len(collections.token) > 0 {
+	if len(collection.token) > 0 {
 		t.Error("Not empty token collection")
 	}
 }
 
 func TestAddChunkIp(t *testing.T) {
-	collections := CreateEmptyCollections()
+	collection := NewCollection()
 
 	chunk1 := Chunk{ip: "111"}
 	chunk2 := Chunk{ip: "111"}
 	chunk3 := Chunk{ip: "222"}
 
-	collections.addChunkIp(&chunk1)
-	collections.addChunkIp(&chunk2)
-	collections.addChunkIp(&chunk3)
+	collection.addChunkIp(&chunk1)
+	collection.addChunkIp(&chunk2)
+	collection.addChunkIp(&chunk3)
 
-	if len(collections.ip) != 2 {
+	if len(collection.ip) != 2 {
 		t.Error("Error add chunk ip")
 	}
 
-	s, lenIp := collections.ip["111"]
+	s, lenIp := collection.ip["111"]
 
 	if lenIp == false {
 		t.Error("Error len 111")
@@ -53,7 +53,7 @@ func TestAddChunkIp(t *testing.T) {
 		t.Error("Error count 111 element")
 	}
 
-	s, lenIp = collections.ip["222"]
+	s, lenIp = collection.ip["222"]
 
 	if lenIp == false {
 		t.Error("Error len 222")
@@ -64,7 +64,7 @@ func TestAddChunkIp(t *testing.T) {
 	}
 }
 
-/*func (c *Collections) AddChunk(chunk *Chunk) {
+/*func (c *Collection) AddChunk(chunk *Chunk) {
 	c.addChunkIp(chunk)
 	c.addChunkToken(chunk)
 	c.addChunkApplication(chunk)
@@ -73,46 +73,46 @@ func TestAddChunkIp(t *testing.T) {
 }
 
 
-func (c Collections) addChunkToken(chunk *Chunk) {
+func (c Collection) addChunkToken(chunk *Chunk) {
 	chunkToken := chunk.token
 	c.token.checkOrCreateKey(chunkToken)
 	c.token.addChunk(chunkToken, chunk)
 }
 
-func (c Collections) addChunkApplication(chunk *Chunk) {
+func (c Collection) addChunkApplication(chunk *Chunk) {
 	chunkApplication := chunk.application
 	c.application.checkOrCreateKey(chunkApplication)
 	c.application.addChunk(chunkApplication, chunk)
 }
 
-func (c Collections) addChunkTime(chunk *Chunk) {
+func (c Collection) addChunkTime(chunk *Chunk) {
 	chunkTime := chunk.time
 	c.time.checkOrCreateKey(chunkTime)
 	c.time.addChunk(chunkTime, chunk)
 }
 
-func (c Collections) addChunkType(chunk *Chunk) {
+func (c Collection) addChunkType(chunk *Chunk) {
 	chunkType := chunk.chunkType
 	c.chunkType.checkOrCreateKey(chunkType)
 	c.chunkType.addChunk(chunkType, chunk)
 }
 
-func (s StringGroupCollections) addChunk(key string, chunk *Chunk)  {
+func (s StringGroupCollection) addChunk(key string, chunk *Chunk)  {
 	s[key] = append(s[key], *chunk)
 }
 
-func (s StringGroupCollections) checkOrCreateKey(key string) {
+func (s StringGroupCollection) checkOrCreateKey(key string) {
 	_, ok := s[key]
 	if ok == false {
 		s[key] = []Chunk{}
 	}
 }
 
-func (s TypeGroupCollections) addChunk(key ChunkType, chunk *Chunk)  {
+func (s TypeGroupCollection) addChunk(key ChunkType, chunk *Chunk)  {
 	s[key] = append(s[key], *chunk)
 }
 
-func (s TypeGroupCollections) checkOrCreateKey(key ChunkType) {
+func (s TypeGroupCollection) checkOrCreateKey(key ChunkType) {
 	_, ok := s[key]
 	if ok == false {
 		s[key] = []Chunk{}
@@ -120,11 +120,11 @@ func (s TypeGroupCollections) checkOrCreateKey(key ChunkType) {
 }
 
 
-func (s TimeGroupCollections) addChunk(key time.Time, chunk *Chunk)  {
+func (s TimeGroupCollection) addChunk(key time.Time, chunk *Chunk)  {
 	s[key] = append(s[key], *chunk)
 }
 
-func (s TimeGroupCollections) checkOrCreateKey(key time.Time) {
+func (s TimeGroupCollection) checkOrCreateKey(key time.Time) {
 	_, ok := s[key]
 	if ok == false {
 		s[key] = []Chunk{}

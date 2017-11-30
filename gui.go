@@ -40,11 +40,17 @@ func NewGui() *GUI {
 
 func (g *GUI) Start() {
 
-	defer g.gui.Close()
-
 	if err := g.gui.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
 	}
+}
+
+func (g *GUI) Destroy()  {
+	g.gui.Close()
+}
+
+func (g GUI) AddCollection(collections Collection)  {
+
 }
 
 func guiKeyBindings(g *gocui.Gui) error {
