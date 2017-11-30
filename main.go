@@ -27,7 +27,7 @@ func main() {
 	gui := NewGui()
 	defer gui.Destroy()
 
-	gui.AddCollection(collection)
+	gui.AddCollection(&collection)
 
 	gui.Start()
 }

@@ -11,6 +11,7 @@ import (
 
 type GUI struct {
 	gui *gocui.Gui
+	collection *Collection
 }
 
 func NewGui() *GUI {
@@ -27,7 +28,21 @@ func NewGui() *GUI {
 
 	gui.gui.Cursor = true
 
-	gui.gui.SetManagerFunc(guiLayout)
+	gui.gui.SetManagerFunc(func (*gocui.Gui) error{
+		err := gui.guiLayout()
+
+		if err != nil {
+			return err
+		}
+
+		err = gui.build()
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 
 	if err := guiKeyBindings(gui.gui); err != nil {
 		log.Panicln(err)
@@ -49,8 +64,22 @@ func (g *GUI) Destroy()  {
 	g.gui.Close()
 }
 
-func (g GUI) AddCollection(collections Collection)  {
+func (g *GUI) AddCollection(collection *Collection)  {
+	g.collection = collection
+}
 
+func (g *GUI ) build() error {
+	view, err := g.gui.View("side")
+
+	if err != nil {
+		return err
+	}
+
+	for key, _ := range g.collection.ip {
+		fmt.Fprintln(view, key)
+	}
+
+	return nil
 }
 
 func guiKeyBindings(g *gocui.Gui) error {
@@ -85,9 +114,9 @@ func guiKeyBindings(g *gocui.Gui) error {
 	return nil
 }
 
-func guiLayout(g *gocui.Gui) error {
-	maxX, maxY := g.Size()
-	if v, err := g.SetView("side", -1, -1, 30, maxY); err != nil {
+func (g *GUI) guiLayout() error {
+	maxX, maxY := g.gui.Size()
+	if v, err := g.gui.SetView("side", -1, -1, 30, maxY-2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -100,7 +129,8 @@ func guiLayout(g *gocui.Gui) error {
 		fmt.Fprint(v, "\rWill be")
 		fmt.Fprint(v, "deleted\rItem 4\nItem 5")
 	}
-	if v, err := g.SetView("main", 30, -1, maxX, maxY); err != nil {
+
+	if v, err := g.gui.SetView("main", 30, -1, maxX, maxY-2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -111,9 +141,34 @@ func guiLayout(g *gocui.Gui) error {
 		fmt.Fprintf(v, "%s", b)
 		v.Editable = true
 		v.Wrap = true
-		if _, err := g.SetCurrentView("main"); err != nil {
+		if _, err := g.gui.SetCurrentView("main"); err != nil {
 			return err
 		}
+	}
+
+	if v, err := g.gui.SetView("footer_help", -1, maxY - 2, maxX, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		v.Editable = false
+		v.Wrap = true
+		fmt.Fprint(v, "F1: Help")
+	}
+	if v, err := g.gui.SetView("footer_help", -1, maxY - 2, maxX/2, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		v.Editable = false
+		v.Wrap = true
+		fmt.Fprint(v, "F1: Help")
+	}
+	if v, err := g.gui.SetView("footer_groups", maxX/2, maxY - 2, maxX, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		v.Editable = false
+		v.Wrap = true
+		fmt.Fprint(v, "F2: Groups: ")
 	}
 	return nil
 }
