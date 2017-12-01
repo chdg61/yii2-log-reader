@@ -30,6 +30,10 @@ func NewGui() *GUI {
 
 	gui.gui.SetManager(&gui)
 
+	gui.gui.Update(func(gc *gocui.Gui) error {
+		return gui.build()
+	})
+
 	if err := guiKeyBindings(gui.gui); err != nil {
 		log.Panicln(err)
 	}
@@ -156,12 +160,6 @@ func (g *GUI) Layout(gui *gocui.Gui) error {
 		v.Editable = false
 		v.Wrap = true
 		fmt.Fprint(v, "F2: Groups: ")
-	}
-
-	err := g.build()
-
-	if err != nil {
-		return err
 	}
 
 	return nil
