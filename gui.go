@@ -9,6 +9,10 @@ import (
 	"log"
 )
 
+const (
+	VIEW_GROUP = "group"
+)
+
 type GUI struct {
 	gui *gocui.Gui
 	collection *Collection
@@ -34,7 +38,7 @@ func NewGui() *GUI {
 		return gui.build()
 	})
 
-	if err := guiKeyBindings(gui.gui); err != nil {
+	if err := gui.keyBindings(); err != nil {
 		log.Panicln(err)
 	}
 
@@ -72,33 +76,36 @@ func (g *GUI ) build() error {
 	return nil
 }
 
-func guiKeyBindings(g *gocui.Gui) error {
-	if err := g.SetKeybinding("side", gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
+func (gui *GUI) keyBindings() error {
+	if err := gui.gui.SetKeybinding("side", gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("main", gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
+	if err := gui.gui.SetKeybinding("main", gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("side", gocui.KeyArrowDown, gocui.ModNone, guiCursorDown); err != nil {
+	if err := gui.gui.SetKeybinding("side", gocui.KeyArrowDown, gocui.ModNone, guiCursorDown); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("side", gocui.KeyArrowUp, gocui.ModNone, guiCursorUp); err != nil {
+	if err := gui.gui.SetKeybinding("side", gocui.KeyArrowUp, gocui.ModNone, guiCursorUp); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, guiQuit); err != nil {
+	if err := gui.gui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, guiQuit); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("side", gocui.KeyEnter, gocui.ModNone, guiGetLine); err != nil {
+	if err := gui.gui.SetKeybinding("side", gocui.KeyEnter, gocui.ModNone, guiGetLine); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("msg", gocui.KeyEnter, gocui.ModNone, guiDeleteMessage); err != nil {
+	if err := gui.gui.SetKeybinding("msg", gocui.KeyEnter, gocui.ModNone, guiDeleteMessage); err != nil {
 		return err
 	}
 
-	if err := g.SetKeybinding("main", gocui.KeyCtrlS, gocui.ModNone, guiSaveMain); err != nil {
+	if err := gui.gui.SetKeybinding("main", gocui.KeyCtrlS, gocui.ModNone, guiSaveMain); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("main", gocui.KeyCtrlW, gocui.ModNone, guiSaveVisualMain); err != nil {
+	if err := gui.gui.SetKeybinding("main", gocui.KeyCtrlW, gocui.ModNone, guiSaveVisualMain); err != nil {
+		return err
+	}
+	if err := gui.gui.SetKeybinding("", gocui.KeyF2, gocui.ModNone, changeGroup); err != nil {
 		return err
 	}
 	return nil
@@ -274,6 +281,21 @@ func guiSaveVisualMain(g *gocui.Gui, v *gocui.View) error {
 	vb := v.ViewBuffer()
 	if _, err := io.Copy(f, strings.NewReader(vb)); err != nil {
 		return err
+	}
+	return nil
+}
+
+func changeGroup(g *gocui.Gui, v *gocui.View) error {
+
+	maxX, maxY := g.Size()
+	if v, err := g.SetView(VIEW_GROUP, maxX/2-30, maxY/2-10, maxX/2+30, maxY/2+10); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		fmt.Fprintln(v, "1111")
+		if _, err := g.SetCurrentView(VIEW_GROUP); err != nil {
+			return err
+		}
 	}
 	return nil
 }
