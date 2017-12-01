@@ -105,9 +105,16 @@ func (gui *GUI) keyBindings() error {
 	if err := gui.gui.SetKeybinding("main", gocui.KeyCtrlW, gocui.ModNone, guiSaveVisualMain); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("", gocui.KeyF2, gocui.ModNone, changeGroup); err != nil {
+	if err := gui.gui.SetKeybinding("", gocui.KeyF2, gocui.ModNone, gui.changeGroup); err != nil {
 		return err
 	}
+	if err := gui.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowDown, gocui.ModNone, gui.groupCursorDown); err != nil {
+		return err
+	}
+	if err := gui.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowUp, gocui.ModNone, gui.groupCursorUp); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -285,16 +292,64 @@ func guiSaveVisualMain(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func changeGroup(g *gocui.Gui, v *gocui.View) error {
+func (gui *GUI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 
 	maxX, maxY := g.Size()
-	if v, err := g.SetView(VIEW_GROUP, maxX/2-30, maxY/2-10, maxX/2+30, maxY/2+10); err != nil {
+	if v, err := g.SetView(VIEW_GROUP, maxX/2-20, maxY/2-10, maxX/2+20, maxY/2+10); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprintln(v, "1111")
+		v.Highlight = true
+		v.SelBgColor = gocui.ColorGreen
+		v.SelFgColor = gocui.ColorBlack
+		v.BgColor = gocui.ColorCyan
+		v.FgColor = gocui.ColorWhite
+		fmt.Fprintln(v, "Time")
+		fmt.Fprintln(v, "IP")
+		fmt.Fprintln(v, "Token")
+		fmt.Fprintln(v, "Type")
+		fmt.Fprintln(v, "Application")
+
 		if _, err := g.SetCurrentView(VIEW_GROUP); err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func (gui *GUI) groupCursorDown(g *gocui.Gui, v *gocui.View) error {
+	if v != nil {
+		cx, cy := v.Cursor()
+
+		l, err := v.Line(cy + 1)
+
+		if l == "" {
+			return nil
+		}
+
+		if err != nil {
+			return err
+		}
+
+		if err := v.SetCursor(cx, cy+1); err != nil {
+			ox, oy := v.Origin()
+			if err := v.SetOrigin(ox, oy+1); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (gui *GUI) groupCursorUp(g *gocui.Gui, v *gocui.View) error {
+	if v != nil {
+		ox, oy := v.Origin()
+		cx, cy := v.Cursor()
+
+		if err := v.SetCursor(cx, cy-1); err != nil && oy > 0 {
+			if err := v.SetOrigin(ox, oy-1); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
