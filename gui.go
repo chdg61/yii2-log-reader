@@ -34,6 +34,8 @@ func NewGui() *GUI {
 
 	gui.gui.SetManager(&gui)
 
+	gui.gui.InputEsc = true
+
 	gui.gui.Update(func(gc *gocui.Gui) error {
 		return gui.build()
 	})
@@ -106,6 +108,9 @@ func (gui *GUI) keyBindings() error {
 		return err
 	}
 	if err := gui.gui.SetKeybinding("", gocui.KeyF2, gocui.ModNone, gui.changeGroup); err != nil {
+		return err
+	}
+	if err := gui.gui.SetKeybinding("", gocui.KeyEsc, gocui.ModNone, gui.closeGroup); err != nil {
 		return err
 	}
 	if err := gui.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowDown, gocui.ModNone, gui.groupCursorDown); err != nil {
@@ -299,6 +304,7 @@ func (gui *GUI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
+		v.Title = "Groups"
 		v.Highlight = true
 		v.SelBgColor = gocui.ColorGreen
 		v.SelFgColor = gocui.ColorBlack
@@ -314,6 +320,19 @@ func (gui *GUI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 			return err
 		}
 	}
+	return nil
+}
+
+func (gui *GUI) closeGroup(g *gocui.Gui, v *gocui.View) error {
+
+	v, err := g.View(VIEW_GROUP)
+
+	if err == nil {
+		return g.DeleteView(VIEW_GROUP)
+	} else if err != gocui.ErrUnknownView {
+		return err
+	}
+
 	return nil
 }
 
