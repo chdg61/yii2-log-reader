@@ -11,14 +11,18 @@ import (
 
 const (
 	VIEW_GROUP = "group"
+	VIEW_LEFT = "left"
+	VIEW_MAIN = "main"
+	VIEW_FOOTER_HELP = "footer_help"
+	VIEW_FOOTER_GROUP = "footer_group"
 )
 
-type GUI struct {
+type UI struct {
 	gui *gocui.Gui
 	collection *Collection
 }
 
-func NewGui() *GUI {
+func NewUI() *UI {
 
 	g, err := gocui.NewGui(gocui.OutputNormal)
 
@@ -26,107 +30,107 @@ func NewGui() *GUI {
 		log.Panicln(err)
 	}
 
-	gui := GUI{
+	ui := UI{
 		gui: g,
 	}
 
-	gui.gui.Cursor = true
+	ui.gui.Cursor = true
 
-	gui.gui.SetManager(&gui)
+	ui.gui.SetManager(&ui)
 
-	gui.gui.InputEsc = true
+	ui.gui.InputEsc = true
 
-	gui.gui.Update(func(gc *gocui.Gui) error {
-		return gui.build()
+	ui.gui.Update(func(gc *gocui.Gui) error {
+		return ui.build()
 	})
 
-	if err := gui.keyBindings(); err != nil {
+	if err := ui.keyBindings(); err != nil {
 		log.Panicln(err)
 	}
 
-	return &gui
+	return &ui
 }
 
 
 
-func (g *GUI) Start() {
+func (u *UI) Start() {
 
-	if err := g.gui.MainLoop(); err != nil && err != gocui.ErrQuit {
+	if err := u.gui.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
 	}
 }
 
-func (g *GUI) Destroy()  {
-	g.gui.Close()
+func (u *UI) Destroy()  {
+	u.gui.Close()
 }
 
-func (g *GUI) AddCollection(collection *Collection)  {
-	g.collection = collection
+func (u *UI) AddCollection(collection *Collection)  {
+	u.collection = collection
 }
 
-func (g *GUI ) build() error {
-	view, err := g.gui.View("side")
+func (u *UI) build() error {
+	view, err := u.gui.View(VIEW_LEFT)
 
 	if err != nil {
 		return err
 	}
 
-	for key, _ := range g.collection.ip {
+	for key, _ := range u.collection.ip {
 		fmt.Fprintln(view, key)
 	}
 
 	return nil
 }
 
-func (gui *GUI) keyBindings() error {
-	if err := gui.gui.SetKeybinding("side", gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
+func (u *UI) keyBindings() error {
+	if err := u.gui.SetKeybinding(VIEW_LEFT, gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("main", gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_MAIN, gocui.KeyCtrlSpace, gocui.ModNone, guiNextView); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("side", gocui.KeyArrowDown, gocui.ModNone, guiCursorDown); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_LEFT, gocui.KeyArrowDown, gocui.ModNone, guiCursorDown); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("side", gocui.KeyArrowUp, gocui.ModNone, guiCursorUp); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_LEFT, gocui.KeyArrowUp, gocui.ModNone, guiCursorUp); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, guiQuit); err != nil {
+	if err := u.gui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, guiQuit); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("side", gocui.KeyEnter, gocui.ModNone, guiGetLine); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_LEFT, gocui.KeyEnter, gocui.ModNone, guiGetLine); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("msg", gocui.KeyEnter, gocui.ModNone, guiDeleteMessage); err != nil {
+	if err := u.gui.SetKeybinding("msg", gocui.KeyEnter, gocui.ModNone, guiDeleteMessage); err != nil {
 		return err
 	}
 
-	if err := gui.gui.SetKeybinding("main", gocui.KeyCtrlS, gocui.ModNone, guiSaveMain); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_MAIN, gocui.KeyCtrlS, gocui.ModNone, guiSaveMain); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("main", gocui.KeyCtrlW, gocui.ModNone, guiSaveVisualMain); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_MAIN, gocui.KeyCtrlW, gocui.ModNone, guiSaveVisualMain); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("", gocui.KeyF2, gocui.ModNone, gui.changeGroup); err != nil {
+	if err := u.gui.SetKeybinding("", gocui.KeyF2, gocui.ModNone, u.changeGroup); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding("", gocui.KeyEsc, gocui.ModNone, gui.closeGroup); err != nil {
+	if err := u.gui.SetKeybinding("", gocui.KeyEsc, gocui.ModNone, u.closeGroup); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowDown, gocui.ModNone, gui.groupCursorDown); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowDown, gocui.ModNone, u.groupCursorDown); err != nil {
 		return err
 	}
-	if err := gui.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowUp, gocui.ModNone, gui.groupCursorUp); err != nil {
+	if err := u.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowUp, gocui.ModNone, u.groupCursorUp); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (g *GUI) Layout(gui *gocui.Gui) error {
+func (u *UI) Layout(gui *gocui.Gui) error {
 
 	maxX, maxY := gui.Size()
-	if v, err := gui.SetView("side", -1, -1, 30, maxY-2); err != nil {
+	if v, err := gui.SetView(VIEW_LEFT, -1, -1, 30, maxY-2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -140,7 +144,7 @@ func (g *GUI) Layout(gui *gocui.Gui) error {
 		fmt.Fprint(v, "deleted\rItem 4\nItem 5")
 	}
 
-	if v, err := gui.SetView("main", 30, -1, maxX, maxY-2); err != nil {
+	if v, err := gui.SetView(VIEW_MAIN, 30, -1, maxX, maxY-2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -151,12 +155,12 @@ func (g *GUI) Layout(gui *gocui.Gui) error {
 		fmt.Fprintf(v, "%s", b)
 		v.Editable = true
 		v.Wrap = true
-		if _, err := gui.SetCurrentView("main"); err != nil {
+		if _, err := gui.SetCurrentView(VIEW_MAIN); err != nil {
 			return err
 		}
 	}
 
-	if v, err := gui.SetView("footer_help", -1, maxY - 2, maxX, maxY); err != nil {
+	if v, err := gui.SetView(VIEW_FOOTER_HELP, -1, maxY - 2, maxX, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -164,15 +168,7 @@ func (g *GUI) Layout(gui *gocui.Gui) error {
 		v.Wrap = true
 		fmt.Fprint(v, "F1: Help")
 	}
-	if v, err := gui.SetView("footer_help", -1, maxY - 2, maxX/2, maxY); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		v.Editable = false
-		v.Wrap = true
-		fmt.Fprint(v, "F1: Help")
-	}
-	if v, err := gui.SetView("footer_groups", maxX/2, maxY - 2, maxX, maxY); err != nil {
+	if v, err := gui.SetView(VIEW_FOOTER_GROUP, maxX/2, maxY - 2, maxX, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -297,7 +293,7 @@ func guiSaveVisualMain(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (gui *GUI) changeGroup(g *gocui.Gui, v *gocui.View) error {
+func (u *UI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 
 	maxX, maxY := g.Size()
 	if v, err := g.SetView(VIEW_GROUP, maxX/2-20, maxY/2-10, maxX/2+20, maxY/2+10); err != nil {
@@ -323,11 +319,14 @@ func (gui *GUI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (gui *GUI) closeGroup(g *gocui.Gui, v *gocui.View) error {
+func (u *UI) closeGroup(g *gocui.Gui, v *gocui.View) error {
 
 	v, err := g.View(VIEW_GROUP)
 
 	if err == nil {
+		if _, err := g.SetCurrentView(VIEW_MAIN); err != nil {
+			return err
+		}
 		return g.DeleteView(VIEW_GROUP)
 	} else if err != gocui.ErrUnknownView {
 		return err
@@ -336,7 +335,7 @@ func (gui *GUI) closeGroup(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (gui *GUI) groupCursorDown(g *gocui.Gui, v *gocui.View) error {
+func (u *UI) groupCursorDown(g *gocui.Gui, v *gocui.View) error {
 	if v != nil {
 		cx, cy := v.Cursor()
 
@@ -360,7 +359,7 @@ func (gui *GUI) groupCursorDown(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (gui *GUI) groupCursorUp(g *gocui.Gui, v *gocui.View) error {
+func (u *UI) groupCursorUp(g *gocui.Gui, v *gocui.View) error {
 	if v != nil {
 		ox, oy := v.Origin()
 		cx, cy := v.Cursor()
