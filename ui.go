@@ -10,22 +10,22 @@ import (
 )
 
 const (
-	VIEW_GROUP = "group"
-	VIEW_LEFT = "left"
-	VIEW_MAIN = "main"
-	VIEW_FOOTER_HELP = "footer_help"
+	VIEW_GROUP        = "group"
+	VIEW_LEFT         = "left"
+	VIEW_MAIN         = "main"
+	VIEW_FOOTER_HELP  = "footer_help"
 	VIEW_FOOTER_GROUP = "footer_group"
 )
 
 const (
-	GROUP_IP = "ip"
+	GROUP_IP   = "ip"
 	GROUP_TIME = "time"
 	GROUP_TYPE = "type"
 )
 
 type UI struct {
-	gui *gocui.Gui
-	collection *Collection
+	gui         *gocui.Gui
+	collection  *Collection
 	selectGroup string
 }
 
@@ -58,8 +58,6 @@ func NewUI() *UI {
 	return &ui
 }
 
-
-
 func (u *UI) Start() {
 
 	if err := u.gui.MainLoop(); err != nil && err != gocui.ErrQuit {
@@ -67,11 +65,11 @@ func (u *UI) Start() {
 	}
 }
 
-func (u *UI) Destroy()  {
+func (u *UI) Destroy() {
 	u.gui.Close()
 }
 
-func (u *UI) AddCollection(collection *Collection)  {
+func (u *UI) AddCollection(collection *Collection) {
 	u.collection = collection
 }
 
@@ -90,7 +88,7 @@ func (u *UI) build() error {
 		return err
 	}
 	firstView := false;
-	for key, chunkList  := range u.collection.ip {
+	for key, chunkList := range u.collection.ip {
 		fmt.Fprintln(viewLeft, key)
 		if !firstView {
 			for _, chunk := range chunkList {
@@ -145,6 +143,9 @@ func (u *UI) keyBindings() error {
 	if err := u.gui.SetKeybinding(VIEW_GROUP, gocui.KeyArrowUp, gocui.ModNone, u.groupCursorUp); err != nil {
 		return err
 	}
+	if err := u.gui.SetKeybinding(VIEW_GROUP, gocui.KeyEnter, gocui.ModNone, u.groupEnter); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -177,7 +178,7 @@ func (u *UI) Layout(gui *gocui.Gui) error {
 		}
 	}
 
-	if v, err := gui.SetView(VIEW_FOOTER_HELP, -1, maxY - 2, maxX, maxY); err != nil {
+	if v, err := gui.SetView(VIEW_FOOTER_HELP, -1, maxY-2, maxX, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -185,7 +186,7 @@ func (u *UI) Layout(gui *gocui.Gui) error {
 		v.Wrap = true
 		fmt.Fprint(v, "F1: Help")
 	}
-	if v, err := gui.SetView(VIEW_FOOTER_GROUP, maxX/2, maxY - 2, maxX, maxY); err != nil {
+	if v, err := gui.SetView(VIEW_FOOTER_GROUP, maxX/2, maxY-2, maxX, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -200,7 +201,6 @@ func (u *UI) Layout(gui *gocui.Gui) error {
 func guiQuit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
 }
-
 
 func guiNextView(g *gocui.Gui, v *gocui.View) error {
 	if v == nil || v.Name() == VIEW_LEFT {
@@ -236,7 +236,6 @@ func guiCursorUp(g *gocui.Gui, v *gocui.View) error {
 	}
 	return nil
 }
-
 
 func guiGetLine(g *gocui.Gui, v *gocui.View) error {
 	var l string
@@ -331,21 +330,21 @@ func (u *UI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 
 		cursorIndex := 0
 
-		for i := 0;; i++  {
+		for i := 0; ; i++ {
 			l, _ := v.Line(i)
 			if l == "" {
 				break
 			}
 			switch {
-				case u.selectGroup == GROUP_IP && l == "IP":
-					cursorIndex = i
-					break
-				case u.selectGroup == GROUP_TIME && l == "Time":
-					cursorIndex = i
-					break
-				case u.selectGroup == GROUP_TYPE && l == "Type":
-					cursorIndex = i
-					break
+			case u.selectGroup == GROUP_IP && l == "IP":
+				cursorIndex = i
+				break
+			case u.selectGroup == GROUP_TIME && l == "Time":
+				cursorIndex = i
+				break
+			case u.selectGroup == GROUP_TYPE && l == "Type":
+				cursorIndex = i
+				break
 			}
 		}
 
@@ -410,6 +409,33 @@ func (u *UI) groupCursorUp(g *gocui.Gui, v *gocui.View) error {
 				return err
 			}
 		}
+	}
+	return nil
+}
+
+func (u *UI) groupEnter(g *gocui.Gui, v *gocui.View) error {
+	if v != nil {
+		_, cy := v.Cursor()
+
+		l, err := v.Line(cy)
+
+		if l == "" {
+			return nil
+		}
+
+		if err != nil {
+			return err
+		}
+
+		switch l {
+		case "IP":
+			u.selectGroup = GROUP_IP
+		case "Time":
+			u.selectGroup = GROUP_TIME
+		case "Type":
+			u.selectGroup = GROUP_TYPE
+		}
+
 	}
 	return nil
 }
