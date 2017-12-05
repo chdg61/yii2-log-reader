@@ -329,6 +329,30 @@ func (u *UI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 		fmt.Fprintln(v, "Type")
 		fmt.Fprintln(v, "Application")
 
+		cursorIndex := 0
+
+		for i := 0;; i++  {
+			l, _ := v.Line(i)
+			if l == "" {
+				break
+			}
+			switch {
+				case u.selectGroup == GROUP_IP && l == "IP":
+					cursorIndex = i
+					break
+				case u.selectGroup == GROUP_TIME && l == "Time":
+					cursorIndex = i
+					break
+				case u.selectGroup == GROUP_TYPE && l == "Type":
+					cursorIndex = i
+					break
+			}
+		}
+
+		if err := v.SetCursor(0, cursorIndex); err != nil {
+			return err
+		}
+
 		if _, err := g.SetCurrentView(VIEW_GROUP); err != nil {
 			return err
 		}
