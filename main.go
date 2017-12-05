@@ -24,10 +24,10 @@ func main() {
 		collection.AddChunk(&chunk)
 	}
 
-	gui := NewGui()
-	defer gui.Destroy()
+	ui := NewUI()
+	defer ui.Destroy()
 
-	gui.AddCollection(&collection)
+	ui.AddCollection(&collection)
 
-	gui.Start()
+	ui.Start()
 }
