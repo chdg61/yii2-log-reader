@@ -17,9 +17,16 @@ const (
 	VIEW_FOOTER_GROUP = "footer_group"
 )
 
+const (
+	GROUP_IP = "ip"
+	GROUP_TIME = "time"
+	GROUP_TYPE = "type"
+)
+
 type UI struct {
 	gui *gocui.Gui
 	collection *Collection
+	selectGroup string
 }
 
 func NewUI() *UI {
@@ -69,14 +76,29 @@ func (u *UI) AddCollection(collection *Collection)  {
 }
 
 func (u *UI) build() error {
-	view, err := u.gui.View(VIEW_LEFT)
+	u.selectGroup = GROUP_IP
+
+	viewLeft, err := u.gui.View(VIEW_LEFT)
 
 	if err != nil {
 		return err
 	}
+	var viewMain *gocui.View
+	viewMain, err = u.gui.View(VIEW_MAIN)
 
-	for key, _ := range u.collection.ip {
-		fmt.Fprintln(view, key)
+	if err != nil {
+		return err
+	}
+	firstView := false;
+	for key, chunkList  := range u.collection.ip {
+		fmt.Fprintln(viewLeft, key)
+		if !firstView {
+			for _, chunk := range chunkList {
+				fmt.Fprintln(viewMain, chunk.text)
+			}
+
+			firstView = true
+		}
 	}
 
 	return nil
@@ -137,22 +159,17 @@ func (u *UI) Layout(gui *gocui.Gui) error {
 		v.Highlight = true
 		v.SelBgColor = gocui.ColorGreen
 		v.SelFgColor = gocui.ColorBlack
-		fmt.Fprintln(v, "Item 1")
-		fmt.Fprintln(v, "Item 2")
-		fmt.Fprintln(v, "Item 3")
-		fmt.Fprint(v, "\rWill be")
-		fmt.Fprint(v, "deleted\rItem 4\nItem 5")
 	}
 
 	if v, err := gui.SetView(VIEW_MAIN, 30, -1, maxX, maxY-2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		b, err := ioutil.ReadFile("Mark.Twain-Tom.Sawyer.txt")
-		if err != nil {
-			panic(err)
-		}
-		fmt.Fprintf(v, "%s", b)
+		//b, err := ioutil.ReadFile("Mark.Twain-Tom.Sawyer.txt")
+		//if err != nil {
+		//	panic(err)
+		//}
+		//fmt.Fprintf(v, "%s", b)
 		v.Editable = true
 		v.Wrap = true
 		if _, err := gui.SetCurrentView(VIEW_MAIN); err != nil {
@@ -186,11 +203,11 @@ func guiQuit(g *gocui.Gui, v *gocui.View) error {
 
 
 func guiNextView(g *gocui.Gui, v *gocui.View) error {
-	if v == nil || v.Name() == "side" {
-		_, err := g.SetCurrentView("main")
+	if v == nil || v.Name() == VIEW_LEFT {
+		_, err := g.SetCurrentView(VIEW_MAIN)
 		return err
 	}
-	_, err := g.SetCurrentView("side")
+	_, err := g.SetCurrentView(VIEW_LEFT)
 	return err
 }
 
@@ -247,7 +264,7 @@ func guiDeleteMessage(g *gocui.Gui, v *gocui.View) error {
 	if err := g.DeleteView("msg"); err != nil {
 		return err
 	}
-	if _, err := g.SetCurrentView("side"); err != nil {
+	if _, err := g.SetCurrentView(VIEW_LEFT); err != nil {
 		return err
 	}
 	return nil
