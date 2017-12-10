@@ -1,28 +1,44 @@
 package main
 
 import (
-	"time"
+	"fmt"
 )
 
-type StringGroupCollection map[string][]Chunk
-type TimeGroupCollection map[time.Time][]Chunk
-type TypeGroupCollection map[ChunkType][]Chunk
+type GroupCollection map[fmt.Stringer][]Chunk
+
+
+func (g *GroupCollection) addChunk(key fmt.Stringer, chunk *Chunk)  {
+	(*g)[key] = append((*g)[key], *chunk)
+}
+
+func (g *GroupCollection) checkOrCreateKey(key fmt.Stringer) {
+	_, ok := (*g)[key]
+	if ok == false {
+		(*g)[key] = []Chunk{}
+	}
+}
 
 type Collection struct {
-	time        TimeGroupCollection
-	ip          StringGroupCollection
-	token       StringGroupCollection
-	chunkType   TypeGroupCollection
-	application StringGroupCollection
+	time        GroupCollection
+	ip          GroupCollection
+	token       GroupCollection
+	chunkType   GroupCollection
+	application GroupCollection
 }
+
+type each interface {
+	EachCollection(func(interface{}, *[]Chunk) bool)
+}
+
+
 
 func NewCollection() Collection {
 	return Collection{
-		time:        TimeGroupCollection{},
-		ip:          StringGroupCollection{},
-		token:       StringGroupCollection{},
-		chunkType:   TypeGroupCollection{},
-		application: StringGroupCollection{},
+		time:        GroupCollection{},
+		ip:          GroupCollection{},
+		token:       GroupCollection{},
+		chunkType:   GroupCollection{},
+		application: GroupCollection{},
 	}
 }
 
@@ -40,60 +56,38 @@ func (c *Collection) addChunkIp(chunk *Chunk) {
 	c.ip.addChunk(chunkIp, chunk)
 }
 
-func (c Collection) addChunkToken(chunk *Chunk) {
+func (c *Collection) addChunkToken(chunk *Chunk) {
 	chunkToken := chunk.token
 	c.token.checkOrCreateKey(chunkToken)
 	c.token.addChunk(chunkToken, chunk)
 }
 
-func (c Collection) addChunkApplication(chunk *Chunk) {
+func (c *Collection) addChunkApplication(chunk *Chunk) {
 	chunkApplication := chunk.application
 	c.application.checkOrCreateKey(chunkApplication)
 	c.application.addChunk(chunkApplication, chunk)
 }
 
-func (c Collection) addChunkTime(chunk *Chunk) {
+func (c *Collection) addChunkTime(chunk *Chunk) {
 	chunkTime := chunk.time
 	c.time.checkOrCreateKey(chunkTime)
 	c.time.addChunk(chunkTime, chunk)
 }
 
-func (c Collection) addChunkType(chunk *Chunk) {
+func (c *Collection) addChunkType(chunk *Chunk) {
 	chunkType := chunk.chunkType
 	c.chunkType.checkOrCreateKey(chunkType)
 	c.chunkType.addChunk(chunkType, chunk)
 }
 
-func (s StringGroupCollection) addChunk(key string, chunk *Chunk)  {
-	s[key] = append(s[key], *chunk)
+func (c *Collection) getGroup(key string)  {
+
 }
 
-func (s StringGroupCollection) checkOrCreateKey(key string) {
-	_, ok := s[key]
-	if ok == false {
-		s[key] = []Chunk{}
-	}
-}
-
-func (s TypeGroupCollection) addChunk(key ChunkType, chunk *Chunk)  {
-	s[key] = append(s[key], *chunk)
-}
-
-func (s TypeGroupCollection) checkOrCreateKey(key ChunkType) {
-	_, ok := s[key]
-	if ok == false {
-		s[key] = []Chunk{}
-	}
-}
-
-
-func (s TimeGroupCollection) addChunk(key time.Time, chunk *Chunk)  {
-	s[key] = append(s[key], *chunk)
-}
-
-func (s TimeGroupCollection) checkOrCreateKey(key time.Time) {
-	_, ok := s[key]
-	if ok == false {
-		s[key] = []Chunk{}
+func (g *GroupCollection) EachCollection(f func(key fmt.Stringer, c *[]Chunk) bool) {
+	for key, chunkList := range *g {
+		if f(key, &chunkList) == false {
+			break
+		}
 	}
 }

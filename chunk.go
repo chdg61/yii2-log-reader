@@ -14,13 +14,46 @@ func (c ChunkType) String() string  {
 	return strings.ToUpper(string(c))
 }
 
+type Ip string
+
+func (ip Ip) String() string {
+	return string(ip)
+}
+
+type Token string
+
+func (t Token) String() string {
+	return string(t)
+}
+
+type Application string
+
+func (a Application) String() string {
+	return string(a)
+}
+
+type Time struct {
+	time.Time
+}
+
+func (t Time) String() string {
+	return t.Format("02.01.2006 15:04:05")
+}
+
+func NewTime(year int, month time.Month, day, hour, min, sec int) Time {
+	t := Time{}
+	t.Time = time.Date(year, month, day, hour, min, sec, 0, time.UTC)
+
+	return t
+}
+
 
 type Chunk struct {
-	time time.Time
-	ip string
-	token string
+	time Time
+	ip Ip
+	token Token
 	chunkType ChunkType
-	application string
+	application Application
 	message string
 	text string
 }
@@ -70,10 +103,10 @@ func Parse(args []byte) []Chunk {
 			seconds, _ := strconv.Atoi(matchesTime[6])
 
 			chunk := Chunk{
-				time: time.Date(year, time.Month(month), day, hour, minutes, seconds, 0, time.UTC),
-				ip: matches[2],
-				token: matches[4],
-				application: matches[6],
+				time: NewTime(year, time.Month(month), day, hour, minutes, seconds),
+				ip: Ip(matches[2]),
+				token: Token(matches[4]),
+				application: Application(matches[6]),
 				chunkType: ChunkType(matches[5]),
 			}
 			chunk.addText(matches[7])

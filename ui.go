@@ -48,6 +48,7 @@ func NewUI() *UI {
 	ui.gui.InputEsc = true
 
 	ui.gui.Update(func(gc *gocui.Gui) error {
+		ui.selectGroup = GROUP_IP
 		return ui.build()
 	})
 
@@ -74,7 +75,6 @@ func (u *UI) AddCollection(collection *Collection) {
 }
 
 func (u *UI) build() error {
-	u.selectGroup = GROUP_IP
 
 	viewLeft, err := u.gui.View(VIEW_LEFT)
 
@@ -88,16 +88,43 @@ func (u *UI) build() error {
 		return err
 	}
 	firstView := false;
-	for key, chunkList := range u.collection.ip {
+
+	var group GroupCollection
+
+	switch u.selectGroup {
+		case GROUP_IP:
+			group = u.collection.ip
+		case GROUP_TIME:
+			group = u.collection.time
+		case GROUP_TYPE:
+			group = u.collection.chunkType
+	}
+
+	viewLeft.Clear()
+	viewMain.Clear()
+
+	group.EachCollection(func(key fmt.Stringer, chunkList *[]Chunk) bool {
 		fmt.Fprintln(viewLeft, key)
 		if !firstView {
-			for _, chunk := range chunkList {
+			for _, chunk := range *chunkList {
 				fmt.Fprintln(viewMain, chunk.text)
 			}
 
 			firstView = true
 		}
-	}
+
+		return true
+	})
+	//for key, chunkList := range u.collection.ip {
+	//	fmt.Fprintln(viewLeft, key)
+	//	if !firstView {
+	//		for _, chunk := range chunkList {
+	//			fmt.Fprintln(viewMain, chunk.text)
+	//		}
+	//
+	//		firstView = true
+	//	}
+	//}
 
 	return nil
 }
@@ -435,6 +462,13 @@ func (u *UI) groupEnter(g *gocui.Gui, v *gocui.View) error {
 		case "Type":
 			u.selectGroup = GROUP_TYPE
 		}
+
+		u.build()
+
+		if _, err := g.SetCurrentView(VIEW_MAIN); err != nil {
+			return err
+		}
+		g.DeleteView(VIEW_GROUP)
 
 	}
 	return nil

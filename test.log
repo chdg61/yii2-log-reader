@@ -66,7 +66,7 @@ Stack trace:
 #6 /usr/local/www/vendor/yiisoft/yii2/base/Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
 #7 /usr/local/www/backend/web/index.php(18): yii\base\Application->run()
 #8 {main}
-2016-07-01 14:15:44 [5.166.116.1][23][dgo965n0fr0mij9bcs1auheoj0][info][application] $_COOKIE = [
+2016-07-01 14:15:44 [192.168.1.1][23][dgo965n0fr0mij9bcs1auheoj0][info][application] $_COOKIE = [
     '_ym_uid' => '1464576174262065318'
     '_gat' => '1'
     'PHPSESSID' => 'dgo965n0fr0mij9bcs1auheoj0'
