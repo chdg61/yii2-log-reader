@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestCreateEmptyCollection(t *testing.T) {
+func TestNewCollection(t *testing.T) {
 	collection := NewCollection()
 
 	if len(collection.ip) > 0 {
@@ -31,9 +31,9 @@ func TestCreateEmptyCollection(t *testing.T) {
 func TestAddChunkIp(t *testing.T) {
 	collection := NewCollection()
 
-	chunk1 := Chunk{ip: "111"}
-	chunk2 := Chunk{ip: "111"}
-	chunk3 := Chunk{ip: "222"}
+	chunk1 := Chunk{ip: Ip("111")}
+	chunk2 := Chunk{ip: Ip("111")}
+	chunk3 := Chunk{ip: Ip("222")}
 
 	collection.addChunkIp(&chunk1)
 	collection.addChunkIp(&chunk2)
@@ -43,7 +43,7 @@ func TestAddChunkIp(t *testing.T) {
 		t.Error("Error add chunk ip")
 	}
 
-	s, lenIp := collection.ip["111"]
+	s, lenIp := collection.ip[Ip("111")]
 
 	if lenIp == false {
 		t.Error("Error len 111")
@@ -53,7 +53,7 @@ func TestAddChunkIp(t *testing.T) {
 		t.Error("Error count 111 element")
 	}
 
-	s, lenIp = collection.ip["222"]
+	s, lenIp = collection.ip[Ip("222")]
 
 	if lenIp == false {
 		t.Error("Error len 222")
@@ -61,6 +61,76 @@ func TestAddChunkIp(t *testing.T) {
 
 	if len(s) != 1 {
 		t.Error("Error count 222 element")
+	}
+}
+
+func TestAddChunk(t *testing.T) {
+	collection := NewCollection()
+
+	chunk1 := Chunk{
+		ip: Ip("ip_adres_1"),
+		token: Token("token1"),
+	}
+	chunk2 := Chunk{
+		ip: Ip("ip_adres_1"),
+		token: Token("token1"),
+	}
+	chunk3 := Chunk{
+		ip: Ip("ip_adres_2"),
+		token: Token("token2"),
+	}
+
+	collection.AddChunk(&chunk1)
+	collection.AddChunk(&chunk2)
+	collection.AddChunk(&chunk3)
+
+	if len(collection.ip) != 2 {
+		t.Error("Error add chunk ip")
+	}
+
+	s, lenIp := collection.ip[Ip("ip_adres_1")]
+
+	if lenIp == false {
+		t.Error("Error len ip_adres_1")
+	}
+
+	if len(s) != 2 {
+		t.Error("Error count ip_adres_1 element")
+	}
+
+	s, lenIp = collection.ip[Ip("ip_adres_2")]
+
+	if lenIp == false {
+		t.Error("Error len ip_adres_2")
+	}
+
+	if len(s) != 1 {
+		t.Error("Error count ip_adres_2 element")
+	}
+
+	// token
+	if len(collection.token) != 2 {
+		t.Error("Error add chunk ip")
+	}
+
+	s, lenToken := collection.token[Token("token1")]
+
+	if lenToken == false {
+		t.Error("Error len token1")
+	}
+
+	if len(s) != 2 {
+		t.Error("Error count token1 element")
+	}
+
+	s, lenToken = collection.token[Token("token2")]
+
+	if lenToken == false {
+		t.Error("Error len token1")
+	}
+
+	if len(s) != 1 {
+		t.Error("Error count token1 element")
 	}
 }
 
@@ -72,12 +142,6 @@ func TestAddChunkIp(t *testing.T) {
 	c.addChunkType(chunk)
 }
 
-
-func (c Collection) addChunkToken(chunk *Chunk) {
-	chunkToken := chunk.token
-	c.token.checkOrCreateKey(chunkToken)
-	c.token.addChunk(chunkToken, chunk)
-}
 
 func (c Collection) addChunkApplication(chunk *Chunk) {
 	chunkApplication := chunk.application
