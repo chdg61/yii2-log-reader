@@ -4,22 +4,24 @@ import (
 	"os"
 	"io/ioutil"
 	"encoding/json"
-	"fmt"
 )
 
 type Settings struct {
 	RegexpCheck string `json:"regexp_check"`
-	RegexpHeader string `json:"regexp_check"`
+	RegexpHeader string `json:"regexp_header"`
 }
 
 var settings = Settings{}
 
-const fileSettings = "settings.json";
+var fileSettings = "settings.json";
 
 func init() {
+	initSetting()
+}
+
+func initSetting(){
 	if _, err := os.Stat(fileSettings); !os.IsNotExist(err) {
 		file, _ := ioutil.ReadFile(fileSettings)
-		fmt.Println(file)
 		json.Unmarshal(file, &settings)
 	}
 
