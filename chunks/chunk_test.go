@@ -1,4 +1,4 @@
-package main
+package chunks
 
 import (
 	"testing"
@@ -17,13 +17,13 @@ func TestChunkAddText(t *testing.T)  {
 
 	chunk.addText("first")
 
-	if chunk.text != "first" {
+	if chunk.Text != "first" {
 		t.Error("Error add text chunk")
 	}
 
 	chunk.addText("second")
 
-	if chunk.text != "first\nsecond" {
+	if chunk.Text != "first\nsecond" {
 		t.Error("Error add next text chunk")
 	}
 }
@@ -77,44 +77,44 @@ func TestParse(t *testing.T) {
 	chunk1 := &chunks[0]
 	chunk2 := &chunks[1]
 
-	if chunk1.ip != `192.168.1.1` {
-		t.Errorf("Parser ip error %s", chunk1.ip)
+	if chunk1.Ip != `192.168.1.1` {
+		t.Errorf("Parser ip error %s", chunk1.Ip)
 	}
 
-	if chunk2.ip != `192.168.1.2` {
-		t.Errorf("Parser ip error %s", chunk2.ip)
+	if chunk2.Ip != `192.168.1.2` {
+		t.Errorf("Parser ip error %s", chunk2.Ip)
 	}
 
-	if chunk1.time.String() != `01.01.2018 14:15:16` {
-		t.Errorf("Parse time error %s", chunk1.time)
+	if chunk1.Time.String() != `01.01.2018 14:15:16` {
+		t.Errorf("Parse time error %s", chunk1.Time)
 	}
 
-	if chunk2.time.String() != `01.01.2018 14:15:17` {
-		t.Errorf("Parse time error %s", chunk1.time)
+	if chunk2.Time.String() != `01.01.2018 14:15:17` {
+		t.Errorf("Parse time error %s", chunk1.Time)
 	}
 
-	if chunk1.token != `test_hash` {
-		t.Errorf("Parse token error %s", chunk1.token)
+	if chunk1.Token != `test_hash` {
+		t.Errorf("Parse token error %s", chunk1.Token)
 	}
 
-	if chunk2.token != `test_hash` {
-		t.Errorf("Parse token error %s", chunk2.token)
+	if chunk2.Token != `test_hash` {
+		t.Errorf("Parse token error %s", chunk2.Token)
 	}
 
-	if chunk1.chunkType != "error" {
-		t.Errorf("Parse chunk type error %s", chunk1.chunkType)
+	if chunk1.ChunkType != "error" {
+		t.Errorf("Parse chunk type error %s", chunk1.ChunkType)
 	}
 
-	if chunk2.chunkType != `info` {
-		t.Errorf("Parse chunk type error %s", chunk2.chunkType)
+	if chunk2.ChunkType != `info` {
+		t.Errorf("Parse chunk type error %s", chunk2.ChunkType)
 	}
 
-	if chunk1.application != `api\exception\ApiException` {
-		t.Errorf("Parse application error %s", chunk1.application)
+	if chunk1.Application != `api\exception\ApiException` {
+		t.Errorf("Parse application error %s", chunk1.Application)
 	}
 
-	if chunk2.application != `application` {
-		t.Errorf("Parse application error %s", chunk2.application)
+	if chunk2.Application != `application` {
+		t.Errorf("Parse application error %s", chunk2.Application)
 	}
 
 	mockText := `api\exception\ApiException: Не удалось получить список заказов in /www/vendor/api.php
@@ -122,16 +122,16 @@ func TestParse(t *testing.T) {
 	#0 /www/controller.php: api->getOrderList()
 	#1 {main}`
 
-	if chunk1.text != mockText {
-		t.Errorf("Parse message error %s", chunk1.text)
+	if chunk1.Text != mockText {
+		t.Errorf("Parse message error %s", chunk1.Text)
 	}
 
 	mockText = `$_COOKIE = [
 	'id' => 23
 	]`
 
-	if chunk2.text != mockText {
-		t.Errorf("Parse message error %s", chunk2.text)
+	if chunk2.Text != mockText {
+		t.Errorf("Parse message error %s", chunk2.Text)
 	}
 }
 

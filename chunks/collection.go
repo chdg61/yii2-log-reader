@@ -1,4 +1,4 @@
-package main
+package chunks
 
 import (
 	"fmt"
@@ -19,11 +19,11 @@ func (g *GroupCollection) checkOrCreateKey(key fmt.Stringer) {
 }
 
 type Collection struct {
-	time        GroupCollection
-	ip          GroupCollection
-	token       GroupCollection
-	chunkType   GroupCollection
-	application GroupCollection
+	Time        GroupCollection
+	Ip          GroupCollection
+	Token       GroupCollection
+	ChunkType   GroupCollection
+	Application GroupCollection
 }
 
 type each interface {
@@ -34,11 +34,11 @@ type each interface {
 
 func NewCollection() Collection {
 	return Collection{
-		time:        GroupCollection{},
-		ip:          GroupCollection{},
-		token:       GroupCollection{},
-		chunkType:   GroupCollection{},
-		application: GroupCollection{},
+		Time:        GroupCollection{},
+		Ip:          GroupCollection{},
+		Token:       GroupCollection{},
+		ChunkType:   GroupCollection{},
+		Application: GroupCollection{},
 	}
 }
 
@@ -51,33 +51,33 @@ func (c *Collection) AddChunk(chunk *Chunk) {
 }
 
 func (c *Collection) addChunkIp(chunk *Chunk) {
-	chunkIp := chunk.ip
-	c.ip.checkOrCreateKey(chunkIp)
-	c.ip.addChunk(chunkIp, chunk)
+	chunkIp := chunk.Ip
+	c.Ip.checkOrCreateKey(chunkIp)
+	c.Ip.addChunk(chunkIp, chunk)
 }
 
 func (c *Collection) addChunkToken(chunk *Chunk) {
-	chunkToken := chunk.token
-	c.token.checkOrCreateKey(chunkToken)
-	c.token.addChunk(chunkToken, chunk)
+	chunkToken := chunk.Token
+	c.Token.checkOrCreateKey(chunkToken)
+	c.Token.addChunk(chunkToken, chunk)
 }
 
 func (c *Collection) addChunkApplication(chunk *Chunk) {
-	chunkApplication := chunk.application
-	c.application.checkOrCreateKey(chunkApplication)
-	c.application.addChunk(chunkApplication, chunk)
+	chunkApplication := chunk.Application
+	c.Application.checkOrCreateKey(chunkApplication)
+	c.Application.addChunk(chunkApplication, chunk)
 }
 
 func (c *Collection) addChunkTime(chunk *Chunk) {
-	chunkTime := chunk.time
-	c.time.checkOrCreateKey(chunkTime)
-	c.time.addChunk(chunkTime, chunk)
+	chunkTime := chunk.Time
+	c.Time.checkOrCreateKey(chunkTime)
+	c.Time.addChunk(chunkTime, chunk)
 }
 
 func (c *Collection) addChunkType(chunk *Chunk) {
-	chunkType := chunk.chunkType
-	c.chunkType.checkOrCreateKey(chunkType)
-	c.chunkType.addChunk(chunkType, chunk)
+	chunkType := chunk.ChunkType
+	c.ChunkType.checkOrCreateKey(chunkType)
+	c.ChunkType.addChunk(chunkType, chunk)
 }
 
 func (c *Collection) getGroup(key string)  {

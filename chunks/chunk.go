@@ -1,4 +1,4 @@
-package main
+package chunks
 
 import (
 	"time"
@@ -6,6 +6,7 @@ import (
 	"strings"
 	"regexp"
 	"strconv"
+	"github.com/chdg61/yii2-log-reader/settings"
 )
 
 type ChunkType string
@@ -49,21 +50,21 @@ func NewTime(year int, month time.Month, day, hour, min, sec int) Time {
 
 
 type Chunk struct {
-	time Time
-	ip Ip
-	token Token
-	chunkType ChunkType
-	application Application
-	message string
-	text string
+	Time        Time
+	Ip          Ip
+	Token       Token
+	ChunkType   ChunkType
+	Application Application
+	Message     string
+	Text        string
 }
 
 func (c *Chunk) addText(text string)  {
 	separator := "";
-	if len(c.text) > 0 {
+	if len(c.Text) > 0 {
 		separator = "\n"
 	}
-	c.text = strings.Join([]string{c.text, text},separator)
+	c.Text = strings.Join([]string{c.Text, text},separator)
 }
 
 func Parse(args []byte) []Chunk {
@@ -79,7 +80,7 @@ func Parse(args []byte) []Chunk {
 
 	for _, value := range strList {
 
-		r, regexpErr := regexp.Compile(GetInstant().RegexpCheck)
+		r, regexpErr := regexp.Compile(settings.GetInstant().RegexpCheck)
 
 		if regexpErr != nil {
 			panic("Wrong regexp_check settings")
@@ -89,7 +90,7 @@ func Parse(args []byte) []Chunk {
 		math:= r.MatchString(value)
 
 		if math {
-			r, _ := regexp.Compile(GetInstant().RegexpHeader)
+			r, _ := regexp.Compile(settings.GetInstant().RegexpHeader)
 			matches := r.FindStringSubmatch(value)
 
 			r, _ = regexp.Compile("(\\d{4})-(\\d{1,2})-(\\d{1,2})\\s(\\d{1,2}):(\\d{1,2}):(\\d{1,2})")
@@ -103,11 +104,11 @@ func Parse(args []byte) []Chunk {
 			seconds, _ := strconv.Atoi(matchesTime[6])
 
 			chunk := Chunk{
-				time: NewTime(year, time.Month(month), day, hour, minutes, seconds),
-				ip: Ip(matches[2]),
-				token: Token(matches[4]),
-				application: Application(matches[6]),
-				chunkType: ChunkType(matches[5]),
+				Time:        NewTime(year, time.Month(month), day, hour, minutes, seconds),
+				Ip:          Ip(matches[2]),
+				Token:       Token(matches[4]),
+				Application: Application(matches[6]),
+				ChunkType:   ChunkType(matches[5]),
 			}
 			chunk.addText(matches[7])
 			result = append(result, chunk)

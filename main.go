@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"io/ioutil"
+	"github.com/chdg61/yii2-log-reader/chunks"
+	"github.com/chdg61/yii2-log-reader/ui"
 )
 
 
@@ -17,17 +19,17 @@ func main() {
 	}
 
 
-	chinks := Parse(file)
+	chinks := chunks.Parse(file)
 
-	collection := NewCollection()
+	collection := chunks.NewCollection()
 	for _, chunk := range chinks {
 		collection.AddChunk(&chunk)
 	}
 
-	ui := NewUI()
-	defer ui.Destroy()
+	uiImpl := ui.NewUI()
+	defer uiImpl.Destroy()
 
-	ui.AddCollection(&collection)
+	uiImpl.AddCollection(&collection)
 
-	ui.Start()
+	uiImpl.Start()
 }

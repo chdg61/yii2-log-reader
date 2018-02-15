@@ -1,4 +1,4 @@
-package main
+package ui
 
 import (
 	"github.com/jroimartin/gocui"
@@ -7,6 +7,7 @@ import (
 	"io"
 	"strings"
 	"log"
+	"github.com/chdg61/yii2-log-reader/chunks"
 )
 
 const (
@@ -25,7 +26,7 @@ const (
 
 type UI struct {
 	gui         *gocui.Gui
-	collection  *Collection
+	collection  *chunks.Collection
 	selectGroup string
 }
 
@@ -70,7 +71,7 @@ func (u *UI) Destroy() {
 	u.gui.Close()
 }
 
-func (u *UI) AddCollection(collection *Collection) {
+func (u *UI) AddCollection(collection *chunks.Collection) {
 	u.collection = collection
 }
 
@@ -89,25 +90,25 @@ func (u *UI) build() error {
 	}
 	firstView := false;
 
-	var group GroupCollection
+	var group chunks.GroupCollection
 
 	switch u.selectGroup {
 		case GROUP_IP:
-			group = u.collection.ip
+			group = u.collection.Ip
 		case GROUP_TIME:
-			group = u.collection.time
+			group = u.collection.Time
 		case GROUP_TYPE:
-			group = u.collection.chunkType
+			group = u.collection.ChunkType
 	}
 
 	viewLeft.Clear()
 	viewMain.Clear()
 
-	group.EachCollection(func(key fmt.Stringer, chunkList *[]Chunk) bool {
+	group.EachCollection(func(key fmt.Stringer, chunkList *[]chunks.Chunk) bool {
 		fmt.Fprintln(viewLeft, key)
 		if !firstView {
 			for _, chunk := range *chunkList {
-				fmt.Fprintln(viewMain, chunk.text)
+				fmt.Fprintln(viewMain, chunk.Text)
 			}
 
 			firstView = true
