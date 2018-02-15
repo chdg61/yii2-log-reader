@@ -1,0 +1,4 @@
+package: github.com/chdg61/yii2-log-reader
+import:
+- package: github.com/jroimartin/gocui
+  version: ^0.3.0

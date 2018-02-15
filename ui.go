@@ -31,9 +31,9 @@ type UI struct {
 
 func NewUI() *UI {
 
-	g, err := gocui.NewGui(gocui.OutputNormal)
+	g := gocui.NewGui()
 
-	if err != nil {
+	if err := g.Init(); err != nil {
 		log.Panicln(err)
 	}
 
@@ -43,11 +43,11 @@ func NewUI() *UI {
 
 	ui.gui.Cursor = true
 
-	ui.gui.SetManager(&ui)
+	ui.gui.SetLayout(ui.Layout)
 
 	ui.gui.InputEsc = true
 
-	ui.gui.Update(func(gc *gocui.Gui) error {
+	ui.gui.Execute(func(gc *gocui.Gui) error {
 		ui.selectGroup = GROUP_IP
 		return ui.build()
 	})
@@ -200,7 +200,7 @@ func (u *UI) Layout(gui *gocui.Gui) error {
 		//fmt.Fprintf(v, "%s", b)
 		v.Editable = true
 		v.Wrap = true
-		if _, err := gui.SetCurrentView(VIEW_MAIN); err != nil {
+		if err := gui.SetCurrentView(VIEW_MAIN); err != nil {
 			return err
 		}
 	}
@@ -231,11 +231,9 @@ func guiQuit(g *gocui.Gui, v *gocui.View) error {
 
 func guiNextView(g *gocui.Gui, v *gocui.View) error {
 	if v == nil || v.Name() == VIEW_LEFT {
-		_, err := g.SetCurrentView(VIEW_MAIN)
-		return err
+		return g.SetCurrentView(VIEW_MAIN)
 	}
-	_, err := g.SetCurrentView(VIEW_LEFT)
-	return err
+	return g.SetCurrentView(VIEW_LEFT)
 }
 
 func guiCursorDown(g *gocui.Gui, v *gocui.View) error {
@@ -279,7 +277,7 @@ func guiGetLine(g *gocui.Gui, v *gocui.View) error {
 			return err
 		}
 		fmt.Fprintln(v, l)
-		if _, err := g.SetCurrentView("msg"); err != nil {
+		if err := g.SetCurrentView("msg"); err != nil {
 			return err
 		}
 	}
@@ -290,7 +288,7 @@ func guiDeleteMessage(g *gocui.Gui, v *gocui.View) error {
 	if err := g.DeleteView("msg"); err != nil {
 		return err
 	}
-	if _, err := g.SetCurrentView(VIEW_LEFT); err != nil {
+	if err := g.SetCurrentView(VIEW_LEFT); err != nil {
 		return err
 	}
 	return nil
@@ -379,7 +377,7 @@ func (u *UI) changeGroup(g *gocui.Gui, v *gocui.View) error {
 			return err
 		}
 
-		if _, err := g.SetCurrentView(VIEW_GROUP); err != nil {
+		if err := g.SetCurrentView(VIEW_GROUP); err != nil {
 			return err
 		}
 	}
@@ -391,7 +389,7 @@ func (u *UI) closeGroup(g *gocui.Gui, v *gocui.View) error {
 	v, err := g.View(VIEW_GROUP)
 
 	if err == nil {
-		if _, err := g.SetCurrentView(VIEW_MAIN); err != nil {
+		if err := g.SetCurrentView(VIEW_MAIN); err != nil {
 			return err
 		}
 		return g.DeleteView(VIEW_GROUP)
@@ -465,7 +463,7 @@ func (u *UI) groupEnter(g *gocui.Gui, v *gocui.View) error {
 
 		u.build()
 
-		if _, err := g.SetCurrentView(VIEW_MAIN); err != nil {
+		if err := g.SetCurrentView(VIEW_MAIN); err != nil {
 			return err
 		}
 		g.DeleteView(VIEW_GROUP)

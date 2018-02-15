@@ -1,0 +1,10 @@
+hash: 671fe73c6bbd4de1fe6e8f57c85496242c93023e983ebf31e240b5be2da4f318
+updated: 2018-02-14T23:30:49.552635016+07:00
+imports:
+- name: github.com/jroimartin/gocui
+  version: 4e9ce9a8e26f2ef33dfe297dbdfca148733b6b9b
+- name: github.com/mattn/go-runewidth
+  version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
+- name: github.com/nsf/termbox-go
+  version: 88b7b944be8bc8d8ec6195fca97c5869ba20f99d
+testImports: []
