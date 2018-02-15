@@ -1,1 +1,1 @@
-go run main.go test.log
+go run ./cmd/yii2-logger/main.go test.log
